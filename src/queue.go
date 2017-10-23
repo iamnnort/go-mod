@@ -1,6 +1,6 @@
 package main
 
-// Modeling system queue
+// Queue from modeling system
 type Queue struct {
 	maxItems int
 	items    int

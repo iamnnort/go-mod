@@ -1,20 +1,24 @@
 package main
 
-import "math/rand"
-
 // Request from modeling system
 type Request struct {
-	requests   int
-	p          int
-	discards   int
-	hasRequest bool
+	requests  int
+	discards  int
+	isRequest bool
 }
 
 func (request *Request) generate() {
-	if rand.Int() > request.p {
-		request.p++
-		request.hasRequest = true
-	} else {
-		request.hasRequest = false
-	}
+	request.isRequest = !request.isRequest
+}
+
+func (request *Request) hasRequest() bool {
+	return request.isRequest
+}
+
+func (request *Request) discarding() {
+	request.discards++
+}
+
+func (request *Request) getDiscards() int {
+	return request.discards
 }
