@@ -4,12 +4,14 @@ package main
 type Queue struct {
 	maxItems int
 	items    int
+	summary  int
 }
 
 func (queue *Queue) addItem() {
 	if queue.items < queue.maxItems {
 		queue.items++
 	}
+	queue.summary++
 }
 
 func (queue *Queue) removeItem() {
@@ -28,4 +30,8 @@ func (queue *Queue) isEmpty() bool {
 
 func (queue *Queue) getValue() int {
 	return queue.items
+}
+
+func (queue *Queue) getSummary() int {
+	return queue.summary
 }
