@@ -41,5 +41,5 @@ func (channel *Channel) getProcessed() int {
 }
 
 func (channel *Channel) generate() {
-	channel.hold = rand.Float64() <= channel.p
+	channel.hold = rand.Float64() < channel.p
 }

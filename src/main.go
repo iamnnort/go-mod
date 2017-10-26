@@ -20,7 +20,6 @@ func main() {
 
 	for i := 0; i < iterations; i++ {
 		request.generate()
-		// fmt.Println(request.getRequest(), queue.getValue(), channel1.getValue(), channel2.getValue())
 		p[request.getRequest()][queue.getValue()][channel1.getValue()][channel2.getValue()]++
 		if request.hasRequest() {
 			if !queue.isFull() {
@@ -31,11 +30,15 @@ func main() {
 				if queue.isFull() {
 					request.blocking()
 				} else {
+					request.unblocking()
 					queue.addItem()
 				}
 			}
 		} else {
 			calculate(&channel1, &channel2, &queue, &request)
+			if !queue.isFull() {
+				request.unblocking()
+			}
 		}
 	}
 
@@ -54,34 +57,10 @@ func main() {
 }
 
 func calculate(channel1 *Channel, channel2 *Channel, queue *Queue, request *Request) {
-	if !queue.isEmpty() {
-		if channel1.isEmpty() {
-			channel1.holding()
-			queue.removeItem()
-			if !queue.isEmpty() {
-				if channel2.isEmpty() {
-					channel2.holding()
-					queue.removeItem()
-				} else {
-					channel2.generate()
-					if !channel2.isHold() {
-						queue.removeItem()
-					}
-				}
-			}
-		} else {
-			channel1.generate()
-			if channel1.isHold() {
-				if channel2.isEmpty() {
-					channel2.holding()
-					queue.removeItem()
-				} else {
-					channel2.generate()
-					if !channel2.isHold() {
-						queue.removeItem()
-					}
-				}
-			} else {
+	if !request.isBlocked() {
+		if !queue.isEmpty() {
+			if channel1.isEmpty() {
+				channel1.holding()
 				queue.removeItem()
 				if !queue.isEmpty() {
 					if channel2.isEmpty() {
@@ -94,20 +73,53 @@ func calculate(channel1 *Channel, channel2 *Channel, queue *Queue, request *Requ
 						}
 					}
 				}
+			} else {
+				channel1.generate()
+				if channel1.isHold() {
+					if channel2.isEmpty() {
+						channel2.holding()
+						queue.removeItem()
+					} else {
+						channel2.generate()
+						if !channel2.isHold() {
+							queue.removeItem()
+						}
+					}
+				} else {
+					queue.removeItem()
+					if !queue.isEmpty() {
+						if channel2.isEmpty() {
+							channel2.holding()
+							queue.removeItem()
+						} else {
+							channel2.generate()
+							if !channel2.isHold() {
+								queue.removeItem()
+							}
+						}
+					}
+				}
+			}
+		} else {
+			if channel1.isFull() {
+				channel1.generate()
+				if !channel1.isHold() {
+					channel1.processing()
+				}
+			}
+			if channel2.isFull() {
+				channel2.generate()
+				if !channel2.isHold() {
+					channel2.processing()
+				}
 			}
 		}
 	} else {
-		if channel1.isFull() {
-			channel1.generate()
-			if !channel1.isHold() {
-				channel1.processing()
-			}
-		}
-		if channel2.isFull() {
-			channel2.generate()
-			if !channel2.isHold() {
-				channel2.processing()
-			}
+		channel1.generate()
+		channel2.generate()
+		if !channel1.isHold() && !channel2.isHold() {
+			queue.removeItem()
+			queue.removeItem()
 		}
 	}
 }
