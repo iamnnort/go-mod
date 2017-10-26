@@ -3,7 +3,7 @@ package main
 // Request from modeling system
 type Request struct {
 	requests  int
-	discards  int
+	blocks    int
 	isRequest bool
 }
 
@@ -15,10 +15,17 @@ func (request *Request) hasRequest() bool {
 	return request.isRequest
 }
 
-func (request *Request) discarding() {
-	request.discards++
+func (request *Request) blocking() {
+	request.blocks++
 }
 
-func (request *Request) getDiscards() int {
-	return request.discards
+func (request *Request) getBlocks() int {
+	return request.blocks
+}
+
+func (request *Request) getRequest() int {
+	if request.isRequest {
+		return 1
+	}
+	return 2
 }

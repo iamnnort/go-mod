@@ -11,6 +11,7 @@ func (queue *Queue) addItem() {
 	if queue.items < queue.maxItems {
 		queue.items++
 	}
+
 	queue.summary++
 }
 
