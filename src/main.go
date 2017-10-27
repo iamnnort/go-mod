@@ -40,18 +40,6 @@ func main() {
 		}
 	}
 
-	// fmt.Println("1000:", float64(p[1][0][0][0])/float64(iterations))
-	// fmt.Println("2010:", float64(p[2][0][1][0])/float64(iterations))
-	// fmt.Println("1010:", float64(p[1][0][1][0])/float64(iterations))
-	// fmt.Println("2011:", float64(p[2][0][1][1])/float64(iterations))
-	// fmt.Println("1001:", float64(p[1][0][0][1])/float64(iterations))
-	// fmt.Println("1011:", float64(p[1][0][1][1])/float64(iterations))
-	// fmt.Println("2111:", float64(p[2][1][1][1])/float64(iterations))
-	// fmt.Println("1111:", float64(p[1][1][1][1])/float64(iterations))
-	// fmt.Println("2211:", float64(p[2][2][1][1])/float64(iterations))
-	// fmt.Println("1211:", float64(p[1][2][1][1])/float64(iterations))
-	// fmt.Println("0211:", float64(p[0][2][1][1])/float64(iterations))
-
 	A := 0.5 * (1 - float64(p[0][2][1][1])/float64(iterations))
 	L := float64(queue.getSummary()) / float64(iterations/2)
 	W := float64(L) / float64(A)
