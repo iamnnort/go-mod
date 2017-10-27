@@ -10,7 +10,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	const p1, p2 = 0.75, 0.7
-	const iterations = 1000000
+	const iterations = 10000000
 	var p [3][3][2][2]int
 
 	request := Request{}
@@ -20,6 +20,7 @@ func main() {
 
 	for i := 0; i < iterations; i++ {
 		request.generate()
+		// fmt.Println(request.getRequest(), queue.getValue(), channel1.getValue(), channel2.getValue())
 		p[request.getRequest()][queue.getValue()][channel1.getValue()][channel2.getValue()]++
 		if request.hasRequest() {
 			if !queue.isFull() {
@@ -36,24 +37,28 @@ func main() {
 			}
 		} else {
 			calculate(&channel1, &channel2, &queue, &request)
-			if !queue.isFull() {
-				request.unblocking()
-			}
 		}
 	}
 
-	fmt.Println("1000:", float64(p[1][0][0][0])/float64(iterations))
-	fmt.Println("2010:", float64(p[2][0][1][0])/float64(iterations))
-	fmt.Println("1010:", float64(p[1][0][1][0])/float64(iterations))
-	fmt.Println("2011:", float64(p[2][0][1][1])/float64(iterations))
-	fmt.Println("1001:", float64(p[1][0][0][1])/float64(iterations))
-	fmt.Println("1011:", float64(p[1][0][1][1])/float64(iterations))
-	fmt.Println("2111:", float64(p[2][1][1][1])/float64(iterations))
-	fmt.Println("1111:", float64(p[1][1][1][1])/float64(iterations))
-	fmt.Println("2211:", float64(p[2][2][1][1])/float64(iterations))
-	fmt.Println("1211:", float64(p[1][2][1][1])/float64(iterations))
-	fmt.Println("0211:", float64(p[0][2][1][1])/float64(iterations))
-	statistics(request, queue, channel1, channel2, iterations)
+	// fmt.Println("1000:", float64(p[1][0][0][0])/float64(iterations))
+	// fmt.Println("2010:", float64(p[2][0][1][0])/float64(iterations))
+	// fmt.Println("1010:", float64(p[1][0][1][0])/float64(iterations))
+	// fmt.Println("2011:", float64(p[2][0][1][1])/float64(iterations))
+	// fmt.Println("1001:", float64(p[1][0][0][1])/float64(iterations))
+	// fmt.Println("1011:", float64(p[1][0][1][1])/float64(iterations))
+	// fmt.Println("2111:", float64(p[2][1][1][1])/float64(iterations))
+	// fmt.Println("1111:", float64(p[1][1][1][1])/float64(iterations))
+	// fmt.Println("2211:", float64(p[2][2][1][1])/float64(iterations))
+	// fmt.Println("1211:", float64(p[1][2][1][1])/float64(iterations))
+	// fmt.Println("0211:", float64(p[0][2][1][1])/float64(iterations))
+
+	A := 0.5 * (1 - float64(p[0][2][1][1])/float64(iterations))
+	L := float64(queue.getSummary()) / float64(iterations/2)
+	W := float64(L) / float64(A)
+
+	fmt.Println("A:", A)
+	fmt.Println("L:", L)
+	fmt.Println("W:", W)
 }
 
 func calculate(channel1 *Channel, channel2 *Channel, queue *Queue, request *Request) {
@@ -120,19 +125,7 @@ func calculate(channel1 *Channel, channel2 *Channel, queue *Queue, request *Requ
 		if !channel1.isHold() && !channel2.isHold() {
 			queue.removeItem()
 			queue.removeItem()
+			request.unblocking()
 		}
 	}
-}
-
-func statistics(request Request, queue Queue, channel1 Channel, channel2 Channel, iterations int) {
-	pBlock := float64(request.getBlocks()) / float64(iterations/2)
-	A := 0.5 * (1 - pBlock)
-	A1 := float64(channel1.getProcessed()+channel2.getProcessed()) / float64(iterations/2)
-	L := float64(queue.getSummary()) / float64(iterations/2)
-	W := float64(L) / float64(A)
-
-	fmt.Println("A:", A)
-	fmt.Println("A1:", A1)
-	fmt.Println("L:", L)
-	fmt.Println("W:", W)
 }

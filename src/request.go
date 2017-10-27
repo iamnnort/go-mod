@@ -19,7 +19,6 @@ func (request *Request) hasRequest() bool {
 }
 
 func (request *Request) blocking() {
-	request.blocks++
 	request.blocked = true
 }
 
@@ -29,10 +28,6 @@ func (request *Request) isBlocked() bool {
 
 func (request *Request) unblocking() {
 	request.blocked = false
-}
-
-func (request *Request) getBlocks() int {
-	return request.blocks
 }
 
 func (request *Request) getRequest() int {
